@@ -10,7 +10,7 @@ New changes coming:
 * API cleanup. Better structure with submodules like helpers, thread etc.
 * Will follow the [PEP8](https://www.python.org/dev/peps/pep-0008/)
   style guide. For example method CreateBrowserSync() will become
-  create_browser_sync(). Uppercase constants will become class types.
+  create_browser(sync=True). Uppercase constants will become class types.
 * Better examples
 * Tutorial with many topics explained
 * New great API docs, easy to navigate, up-to-date and easily searchable
