@@ -1,0 +1,53 @@
+pycef
+-----
+    init(settings=None, switches=None)
+    main()
+        - will call pycef.quit() automatically
+    mainwork()
+    quit()
+
+    Browser(async=False, settings=None, url="about:blank", context=None,
+            embed=None)
+        - same class for sync and async browser creation. When created
+          async browser then when calling its methods warnings will be
+          displayed that async browser was not yet created. In OnAfterCreated
+          when browser is ready the Browser class will be filled and its
+          methods will start working.
+        - if embed is None it will delegate window creation to CEF,
+          thus no need to use any third party GUI toolkit in a simple example.
+        - during browser creation detect if pycef.init() was called, if not
+          call it automatically
+
+    Embed()
+        - how to embed browser control:
+            as child (window handle)
+            as popup (parent handle)
+            off-screen (window handle optional)
+
+    Settings()
+    BrowserSettings()
+
+    Switches()
+        append()
+        - chromium and cef command line switches set programmatically
+        - a switch is None by default, can be True/False or string.
+        - define most common chromium/cef switches:
+            .enable_media_stream
+            .proxy_server
+            .no_proxy_server
+            .disable_gpu
+            .disable_gpu_compositing
+            .touch_events=enabled
+            .enable_pinch
+            .allow_file_access_from_files
+        - if a switch is deprecated in Chromium/CEF with time,
+          do not remove the member, but generate a warning that this
+          switch is deprecated. Use reST directive:
+            .. deprecated:: 31.2
+               Use :func:`spam` instead.
+
+
+pycef.helpers
+-------------
+    excepthook()
+    apppath()

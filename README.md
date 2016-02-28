@@ -1,6 +1,15 @@
 # PyCEF
 
-PyCEF is a CEF Python clone that is more Pythonic.
+PyCEF is a CEF Python clone that is more Pythonic. See the
+Hello World example that creates a window with a browser and
+navigates to Google:
+
+```python
+import pycef
+
+pycef.Browser(url="https://www.google.com/")
+pycef.main()
+```
 
 New changes coming:
 * Python 3.5, 3.4 and 2.7 support
@@ -9,8 +18,8 @@ New changes coming:
   strings were used in Python 2.
 * API cleanup. Better structure with submodules like helpers, thread etc.
 * Will follow the [PEP8](https://www.python.org/dev/peps/pep-0008/)
-  style guide. For example method CreateBrowserSync() will become
-  create_browser(sync=True). Uppercase constants will become class types.
+  style guide. Function names in lower case with underscores. Transform
+  enum uppercase constants to class types whenever possible.
 * Better examples
 * Tutorial with many topics explained
 * New great API docs, easy to navigate, up-to-date and easily searchable
@@ -21,3 +30,7 @@ New changes coming:
 * Improvements to Core - in source docs, modular code with better
   structure will be easier to work with for contributors
 * CI builds with Travis and AppVeyor
+
+## New API
+
+See [API.draft](API.draft).
