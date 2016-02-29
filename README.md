@@ -5,10 +5,11 @@ Hello World example that creates a window with a browser and
 navigates to Google:
 
 ```python
-import pycef
+import pycef as cef
+from cef.browser import Browser
 
-pycef.Browser(url="https://www.google.com/")
-pycef.main()
+Browser(url="https://www.google.com/")
+cef.run()
 ```
 
 New changes coming:
@@ -31,6 +32,6 @@ New changes coming:
   structure will be easier to work with for contributors
 * CI builds with Travis and AppVeyor
 
-## New API
+## API draft
 
 See [API.draft](API.draft).

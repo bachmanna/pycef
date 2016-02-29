@@ -1,53 +1,172 @@
+TODO:
+    Cookie()
+    CookieManager()
+    DpiAware()
+    Request()
+    Request2() - old WebRequest()
+    NetworkError
+    VirtualKey
+
+TODO: browse through all functions to see what can be improved
+- all methods from classes
+- all callbacks from handlers
+- functions from cefpython module
+
+
 pycef
 -----
-    init(settings=None, switches=None)
-    main()
-        - will call pycef.quit() automatically
-    mainwork()
+    init(settings=None, switches=None, events=None)
+        - passing events here will call them for all browsers.
+          This allows to pass some events to be
+          called for all browsers while still allowing to pass events
+          to Browser() and these will be called only for this browser.
+          If you pass the same handler to init() and Browser() then
+          it will be called twice.
+    run() - will call pycef.quit() automatically
+    work() - single interation of message loop work
     quit()
 
-    Browser(async=False, settings=None, url="about:blank", context=None,
-            embed=None)
-        - same class for sync and async browser creation. When created
-          async browser then when calling its methods warnings will be
-          displayed that async browser was not yet created. In OnAfterCreated
-          when browser is ready the Browser class will be filled and its
-          methods will start working.
-        - if embed is None it will delegate window creation to CEF,
-          thus no need to use any third party GUI toolkit in a simple example.
-        - during browser creation detect if pycef.init() was called, if not
-          call it automatically
 
-    Embed()
-        - how to embed browser control:
-            as child (window handle)
-            as popup (parent handle)
-            off-screen (window handle optional)
+pycef.app
+---------
 
     Settings()
-    BrowserSettings()
+        - get rid of "enabled"/"disabled" in settings names
+        - get rid of many options that are rarely used, they can still
+          be set using Switches (accelerated-2d-canvas, sandbox)
 
     Switches()
         append()
         - chromium and cef command line switches set programmatically
         - a switch is None by default, can be True/False or string.
-        - define most common chromium/cef switches:
-            .enable_media_stream
-            .proxy_server
-            .no_proxy_server
-            .disable_gpu
-            .disable_gpu_compositing
-            .touch_events=enabled
-            .enable_pinch
-            .allow_file_access_from_files
-        - if a switch is deprecated in Chromium/CEF with time,
-          do not remove the member, but generate a warning that this
-          switch is deprecated. Use reST directive:
-            .. deprecated:: 31.2
-               Use :func:`spam` instead.
+        - define most common chromium/cef switches in Settings() as
+          attributes, but refactor their names:
+            --enable-media-stream, --proxy-server --no-proxy-server
+            --disable-gpu --disable-gpu-compositing --touch-events=enabled
+            --enable-pinch (it has both disable/enable in switches as it's
+                           detected automatically for touch devices)
+            --disable-pinch --allow-file-access-from-files
+            --disable-direct-write --disable-extensions
+            --disable-remote-fonts (name "web-fonts" @font-face css)
+            --disable-smooth-scrolling --enable-smooth-scrolling
+            --disable-web-security --disable-webgl
+            --force-device-scale-factor (DPI related)
+            --in-process-gpu --kiosk (google CEF Forum if that works)
+            --kiosk-printing
+            --load-extension (Loads an extension from the specified directory)
+            --no-referrers (Don't send HTTP-Referer headers)
+            --ppapi-flash-path (ppapi-flash-version)
+            --ppapi-in-process
+            --process-per-site (This mode consolidates same-site pages so that
+                               they share a single process)
+            --site-per-process (Enforces a one-site-per-process security
+                                policy)
+            --renderer-process-limit (Overrides the default/calculated limit
+                                     to the number of renderer processes.)
+            - if a switch is deprecated in Chromium/CEF with time,
+              do not remove the member, but generate a warning that this
+              switch is deprecated. Use reST directive:
+                .. deprecated:: 31.2
+                   Use :func:`spam` instead.
+
+
+pycef.browser
+-------------
+    Browser(async=False, settings=None, url="about:blank", context=None,
+            embedder=None, events=None)
+        - same class for sync and async browser creation. When created
+          async browser then when calling its methods warnings will be
+          displayed that async browser was not yet created. In OnAfterCreated
+          when browser is ready the Browser class will be filled and its
+          methods will start working.
+        - if embedder is None it will delegate window creation to CEF,
+          thus no need to use any third party GUI toolkit in a simple example.
+        - during browser creation detect if pycef.init() was called, if not
+          call it automatically
+        - events must inherit from cef.LoadHandler and other events, this
+          will allow to validate callbacks declarations. API in upstream
+          CEF changes quite often and we should be able to validate this,
+          best if IDE/pylint could detect this statically.
+
+    Embedder()
+        - info on how to embed browser control:
+            as child (window handle)
+            as popup (parent handle)
+            off-screen (window handle optional)
+
+    BrowserSettings()
+        - cleanup similar as in Settings()
+
+    JSBindings()
 
 
 pycef.helpers
 -------------
     excepthook()
     apppath()
+
+
+pycef.window
+------------
+Expose these only after implemented for all platforms.
+
+    validhandle()
+    getparent()
+
+
+pycef.interfaces
+----------------
+"""
+xxxVisitor - asynchronous callbacks to retrieve data.
+xxxClient - another kind of handler, but this one is not intended for
+            passing to init() or Browser()
+xxxHandler - callbacks that notify of events and/or allow for implementing
+             new functionality or modify existing behavior
+"""
+
+CookieVisitor()
+    visit()
+
+StringVisitor()
+    visit()
+
+Request2Client() - WebRequestClient()
+
+DisplayHandler()
+DownloadHandler()
+
+LifespanHandler()
+
+PopupHandler()
+    popup() - LifespanHandler.OnBeforePopup()
+    modal() - LifespanHandler.RunModal
+
+LoadHandler()
+
+RequestHandler()
+ResourceHandler()
+
+V8ContextHandler
+    created()
+    released()
+
+JSHandler()
+    exception()
+
+JSDialogHandler()
+
+KeyboardHandler()
+    prekey()
+    key()
+
+OffscreenHandler()
+    GetRootScreenRect -> rootscreen
+    GetViewRect -> viewrect
+    GetScreenRect -> screenrect
+    GetScreenPoint -> screenpoint
+    GetScreenInfo -> screeninfo
+    OnPopupShow -> popup
+    OnPopupSize -> popupsize
+    OnPaint -> paint
+    OnCursorChange -> cursor
+    OnScrollOffsetChanged => scrolloffset
