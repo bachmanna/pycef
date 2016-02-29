@@ -15,10 +15,10 @@ TODO: browse through all functions to see what can be improved
 
 pycef
 -----
-    init(settings=None, switches=None, events=None)
-        - passing events here will call them for all browsers.
-          This allows to pass some events to be
-          called for all browsers while still allowing to pass events
+    init(settings=None, switches=None, handlers=None)
+        - passing handlers here will call them for all browsers.
+          This allows to pass some handlers to be
+          called for all browsers while still allowing to pass handlers
           to Browser() and these will be called only for this browser.
           If you pass the same handler to init() and Browser() then
           it will be called twice.
@@ -73,7 +73,7 @@ pycef.app
 pycef.browser
 -------------
     Browser(async=False, settings=None, url="about:blank", context=None,
-            embedder=None, events=None)
+            embedder=None, handlers=None)
         - same class for sync and async browser creation. When created
           async browser then when calling its methods warnings will be
           displayed that async browser was not yet created. In OnAfterCreated
@@ -83,7 +83,7 @@ pycef.browser
           thus no need to use any third party GUI toolkit in a simple example.
         - during browser creation detect if pycef.init() was called, if not
           call it automatically
-        - events must inherit from cef.LoadHandler and other events, this
+        - handlers must inherit from cef.LoadHandler and other handlers, this
           will allow to validate callbacks declarations. API in upstream
           CEF changes quite often and we should be able to validate this,
           best if IDE/pylint could detect this statically.
