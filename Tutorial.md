@@ -13,7 +13,7 @@ Table of contents:
 * [Javascript integration](#javascript-integration)
 * [Plugins](#plugins)
 * [Build executable](#build-executable)
-* [What next?](#what-next)
+* [What's next?](#whats-next)
 
 
 ## Installation
@@ -99,11 +99,11 @@ Table of contents:
 
 ## Build executable
 
-* See the examples/installers/ directory. On Win use py2exe. On Linux
+* See the examples/build-executable/ directory. On Win use py2exe. On Linux
   use cxfreeze. On Mac use py2app.
 
 
-## What next?
+## What's next?
 
 * See more examples in the examples/ directory
 * See API docs in the api/ directory

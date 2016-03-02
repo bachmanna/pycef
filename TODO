@@ -1,0 +1,49 @@
+* Update to Chromium 47
+* Update to Cython 0.23.4
+* Unicode strings in Python 2
+
+---
+* package:
+    private/ - cython .pyd/so modules
+    __init__.py - from private.core import init,run,etc
+    browser.py - from private.browser import Browser
+* tox to test app (making distribs, unit tests) in multiple python
+  interpreters (2.7, 3.4, 3.5)
+* User shouldn't access any internal pycef modules/functions by mistake.
+  - Test if defining __all__ will prevent autocompletion of other
+    internal submodules in IDE. However it's better to avoid __all__
+    and not allow for from pycef import *. This could cause trouble/name
+    conflicts.
+  - Try naming internal modules (core, browser, frame) with an underscore,
+    see if this will prevent importing/showing in IDE/dir().
+  - or maybe private/ package with all pycef modules. __init__.py should
+    import from these explicitilly.
+  - check dir(pycef) if it shows any private internal API
+* Events cef abstract classes cannot be instantiated - check this in
+  __init__. Use collections.abc .
+* get rid of SetGlobalClientCallback (special case for:
+    - OnAfterCreated
+    - OnCertificateError
+    - OnBeforePluginLoad). Allow to pass ClientHandler to pycef.init()
+  - may pass only those two callbacks to pycef.init() and the rest
+    to Browser(handlers=) -> allow to pass handlers before browser is
+    created. Currently you can call SetClientHandler() only after
+    browser was created.
+* don't use static methods, this is not Pythonic. Create a function
+  in a module.
+* private python functions in modules should start with _, so that
+  dir(pycef) and auto-completion in IDEs don't show them
+* debpkg - use latest stdeb 0.8.5, it changes installation path but that's OK,
+           breaking BC is fine.
+* Releases: only Wheel package for Win/Mac and only .deb package for Linux
+* installers examples:
+    py2exe for Win
+    py2app for Mac
+    cxfreeze for Linux
+* api: cefpython.module.md , thread.module.md - add ".module" otherwise
+       name conflict with Thread.md class.
+* docs: modules
+    pycef.html
+    pycef.app.html
+    pycef.browser.html
+* pycef.__version__

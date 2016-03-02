@@ -1,8 +1,8 @@
 # PyCEF
 
-PyCEF is a CEF Python clone that is more Pythonic. See the
-Hello World example that creates a window with a browser and
-navigates to Google:
+PyCEF is a CEF Python clone that is more Pythonic. It is still under
+works. See below how a Hello World example will look like using the
+new API. It creates a window with a browser and navigates to Google:
 
 ```python
 import pycef as cef

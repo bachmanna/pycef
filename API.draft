@@ -1,12 +1,3 @@
-TODO:
-    Cookie()
-    CookieManager()
-    DpiAware()
-    Request()
-    Request2() - old WebRequest()
-    NetworkError
-    VirtualKey
-
 TODO: browse through all functions to see what can be improved
 - all methods from classes
 - all callbacks from handlers
@@ -15,13 +6,15 @@ TODO: browse through all functions to see what can be improved
 
 pycef
 -----
-    init(settings=None, switches=None, handlers=None)
+    init(settings=None, switches=None, handlers=None, jsbindings=None)
         - passing handlers here will call them for all browsers.
           This allows to pass some handlers to be
           called for all browsers while still allowing to pass handlers
           to Browser() and these will be called only for this browser.
           If you pass the same handler to init() and Browser() then
           it will be called twice.
+        - bindings passed here will be available in all browsers. You
+          can still pass bindings per-browser.
     run() - will call pycef.quit() automatically
     work() - single interation of message loop work
     quit()
@@ -34,6 +27,10 @@ pycef.app
         - get rid of "enabled"/"disabled" in settings names
         - get rid of many options that are rarely used, they can still
           be set using Switches (accelerated-2d-canvas, sandbox)
+
+    DpiAware()
+    Request2() - old WebRequest(), this request is not associated with
+                 any browser.
 
     Switches()
         append()
@@ -73,7 +70,7 @@ pycef.app
 pycef.browser
 -------------
     Browser(async=False, settings=None, url="about:blank", context=None,
-            embedder=None, handlers=None)
+            embedder=None, handlers=None, jsbindings=None)
         - same class for sync and async browser creation. When created
           async browser then when calling its methods warnings will be
           displayed that async browser was not yet created. In OnAfterCreated
@@ -98,6 +95,20 @@ pycef.browser
         - cleanup similar as in Settings()
 
     JSBindings()
+    Cookie()
+    CookieManager()
+    Request()
+
+
+pycef.keyboard
+--------------
+"""Cross-platform keys mapping."""
+    old VirtualKey for Win
+
+
+pycef.types
+-----------
+    NetworkError
 
 
 pycef.helpers
