@@ -1,6 +1,6 @@
 """Generate API docs from sources.
 
-The cefpython3 package must be first built and installed before running
+The pycef package must be first built and installed before running
 this tool. It inspects both Cython sources and the dynamic module.
 
 TODO:

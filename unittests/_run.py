@@ -21,27 +21,28 @@ Notes:
 import unittest
 import os
 import sys
-from os.path import dirname
+from os.path import dirname, realpath
 import re
 import subprocess
 
 
 def main(pattern=None):
+    """Main entry point."""
     # Set working dir
-    dir_ = dirname(__file__)
-    if dir_:
-        os.chdir(dir_)
+    os.chdir(dirname(realpath(__file__)))
 
     # Script arguments
     testcasearg = ""
     if not pattern:
-        if len(sys.argv) > 1 and ".py" in sys.argv[1]:
-            # FILE or PATTERN arg
-            pattern = sys.argv[1]
-        if len(sys.argv) > 1 and ".py" not in sys.argv[1]:
-            # TESTCASE arg
-            testcasearg = sys.argv[1]
-        pattern = "[!_]*.py"
+        if len(sys.argv) > 1:
+            if ".py" in sys.argv[1]:
+                # FILE or PATTERN arg
+                pattern = sys.argv[1]
+            else:
+                # TESTCASE arg
+                testcasearg = sys.argv[1]
+        if not pattern:
+            pattern = "[!_]*.py"
 
     # Auto discovery using glob pattern
     loader = unittest.TestLoader()
@@ -56,7 +57,7 @@ def main(pattern=None):
     for subsuite in suite:
         for subsubsuite in subsuite:
             if isinstance(subsubsuite, unittest.TestSuite):
-                for testcase in subsubsuite:
+                for _ in subsubsuite:
                     counttests += 1
                 for testcase in subsubsuite:
                     if testcasearg:
@@ -90,7 +91,7 @@ def main(pattern=None):
     newsuitecount = 0
     errors = 0
     failures = 0
-    for testsuite in newsuite:
+    for _ in newsuite:
         newsuitecount += 1
     failed = False
     if newsuitecount:
