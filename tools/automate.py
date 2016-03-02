@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The CEF Python authors. All rights reserved.
+# Copyright (c) 2016 The PyCEF Authors. All rights reserved.
 
 """Build cefpython. Use prebuilt CEF binaries or build CEF from sources.
 

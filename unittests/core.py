@@ -1,3 +1,5 @@
+# Copyright (c) 2016 The PyCEF Authors. All rights reserved.
+
 """Test core functionality.
 
 - init() and quit() without calling run() or work()

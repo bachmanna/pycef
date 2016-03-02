@@ -1,3 +1,5 @@
+# Copyright (c) 2016 The PyCEF Authors. All rights reserved.
+
 """Test creation of browser.
 
 - test both scenarios run() and work() in several sub-scenarios:

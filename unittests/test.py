@@ -1,6 +1,12 @@
+# Copyright (c) 2016 The PyCEF Authors. All rights reserved.
+
+"""Test unittest."""
+
 import unittest
 
+# Globals
 count = 0
+
 
 class Test(unittest.TestCase):
     count = 0

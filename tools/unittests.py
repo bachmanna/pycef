@@ -1,3 +1,5 @@
+# Copyright (c) 2016 The PyCEF Authors. All rights reserved.
+
 """Run all unit tests."""
 
 import os

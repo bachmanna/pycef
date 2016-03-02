@@ -1,4 +1,6 @@
-:: Change Python in user env Path. See usage at the bottom.
+:: Copyright (c) 2016 The PyCEF Authors. All rights reserved.
+
+:: Change Python interpreter in user env Path. See usage at the bottom.
 
 @echo off
 if "%1"=="" goto usage

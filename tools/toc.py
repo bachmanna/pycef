@@ -1,4 +1,4 @@
-# Copyright (c) 2016 The CEF Python Authors. All rights reserved.
+# Copyright (c) 2016 The PyCEF Authors. All rights reserved.
 
 """Create Table of contents (TOC) for a single .md file or for a directory.
 
