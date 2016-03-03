@@ -12,15 +12,15 @@
 """
 
 import unittest
-import _run
+import _test_runner
 from os.path import basename
 
 # Globals
 gcounter = 0
 
 
-class Core1_NewPythonInstance(unittest.TestCase):
-    
+class Core1IsolatedTest(unittest.TestCase):
+
     def test1(self):
         global gcounter
         gcounter += 1
@@ -30,7 +30,7 @@ class Core1_NewPythonInstance(unittest.TestCase):
         pass
 
 
-class Core2_NewPythonInstance(unittest.TestCase):
+class Core2IsolatedTest(unittest.TestCase):
 
     def test3(self):
         global gcounter
@@ -39,4 +39,4 @@ class Core2_NewPythonInstance(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    _run.main(basename(__file__))
+    _test_runner.main(basename(__file__))
