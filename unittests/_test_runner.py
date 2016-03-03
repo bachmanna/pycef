@@ -14,10 +14,10 @@ Options:
 Notes:
     - Files starting with "_" are ignored
     - If test case name contains "IsolatedTest" word then this test
-      case will be run using a new instance of Python interpreter
-    - Tested only with TestCase objects. TestSuite usage is untested.
-    - In tests as a replacement for "unittest.main()" use this code:
+      case will be run using a new instance of Python interpreter.
+      In such case instead of calling "unittest.main()" use this code:
       "import _test_runner; _test_runner.main(os.path.basename(__file__))".
+    - Tested only with TestCase objects. TestSuite usage is untested.
 """
 
 import unittest
