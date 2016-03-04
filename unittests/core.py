@@ -12,7 +12,7 @@
 """
 
 import unittest
-import _test_runner
+import _runner
 from os.path import basename
 
 # Globals
@@ -39,4 +39,4 @@ class Core2IsolatedTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    _test_runner.main(basename(__file__))
+    _runner.main(basename(__file__))

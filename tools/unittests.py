@@ -10,5 +10,5 @@ import subprocess
 
 if __name__ == "__main__":
     os.chdir(join(dirname(realpath(__file__)), "../unittests"))
-    exit_code = subprocess.call(["python", "_test_runner.py"])
+    exit_code = subprocess.call(["python", "_runner.py"])
     sys.exit(exit_code)

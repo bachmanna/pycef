@@ -3,6 +3,7 @@
 * Unicode strings in Python 2
 
 ---
+* wx.chromectrl is missing documentation in api/ docs
 * package:
     private/ - cython .pyd/so modules
     __init__.py - from private.core import init,run,etc
