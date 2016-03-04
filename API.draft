@@ -13,11 +13,13 @@ pycef
           to Browser() and these will be called only for this browser.
           If you pass the same handler to init() and Browser() then
           it will be called twice.
-        - bindings passed here will be available in all browsers. You
+        - jsbindings passed here will be available in all browsers. You
           can still pass bindings per-browser.
     run() - will call pycef.quit() automatically
+    stop() - stop message loop
     work() - single interation of message loop work
-    quit()
+    quit() - stop message loop and quit, call stop() automatically
+             if not called yet.
 
 
 pycef.app
@@ -178,13 +180,15 @@ KeyboardHandler()
     key()
 
 OffscreenHandler()
-    GetRootScreenRect -> rootscreen
-    GetViewRect -> viewrect
-    GetScreenRect -> screenrect
-    GetScreenPoint -> screenpoint
-    GetScreenInfo -> screeninfo
-    OnPopupShow -> popup
-    OnPopupSize -> popupsize
-    OnPaint -> paint
-    OnCursorChange -> cursor
-    OnScrollOffsetChanged => scrolloffset
+    root_screen - GetRootScreenRect
+    view_rect - GetViewRect
+    screen_rect - GetScreenRect
+    screen_point - GetScreenPoint
+    screen_info - GetScreenInfo
+    popup - OnPopupShow
+    popup_size - OnPopupSize
+    paint - OnPaint
+    cursor - OnCursorChange
+    scroll - OnScrollOffsetChanged
+    drag_cursor
+    dragging

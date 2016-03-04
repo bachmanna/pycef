@@ -28,8 +28,8 @@ New changes coming:
   Also build automation of CEF from sources.
 * Unit tests
 * Lots of new CEF API exposed
-* Improvements to Core - in source docs, modular code with better
-  structure will be easier to work with for contributors
+* Improvements to Core - in source docs and modular code with better
+  structure that will make easier to work with for contributors
 * CI builds with Travis and AppVeyor
 
 ## API draft

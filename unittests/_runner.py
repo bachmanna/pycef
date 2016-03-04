@@ -88,7 +88,7 @@ class TestRunner(object):
 
     def run_file(self, filename):
         """Run test cases from a specific file. This is needed so
-        that you can use _run.main() in a test file."""
+        that you can use _runner.main() with isolated tests."""
         self._discover(filename)
         self._run_discovered_suites()
 
