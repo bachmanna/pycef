@@ -29,6 +29,7 @@ import subprocess
 
 
 def main(file_arg=""):
+    # type: (str) -> None
     """Main entry point."""
 
     # Set working dir to script's current
@@ -59,11 +60,12 @@ class TestRunner(object):
     errors = 0
     failures = 0
 
-    _suites = None
-    _isolated_suites = None
-    _import_errors = None  # suites containing import errors
+    _suites = None  # type: unittest.TestSuite
+    _isolated_suites = None  # type: unittest.TestSuite
+    _import_errors = None  # type: unittest.TestSuite
 
     def _reset_state(self):
+        # type: () -> None
         """Reset TestRunner state before test discovery."""
         self.ran = 0
         self.errors = 0
@@ -75,6 +77,7 @@ class TestRunner(object):
     # ---- Public methods
 
     def run_testcase(self, testcase):
+        # type: (str) -> None
         """Run single test case eg 'foo.BarTest'. This is needed to
         run single testcase that is marked as IsolatedTest."""
         self._discover("[!_]*.py", testcase)
@@ -87,12 +90,14 @@ class TestRunner(object):
         self._exit()
 
     def run_file(self, filename):
-        """Run test cases from a specific file. This is needed so
-        that you can use _runner.main() with isolated tests."""
+        # type: (str) -> None
+        """Run test cases from a specific file. This is needed so that
+        you can use _runner.main() in isolated tests."""
         self._discover(filename)
         self._run_discovered_suites()
 
     def run_all(self):
+        # type: () -> None
         """Run all tests from current directory."""
         self._discover("[!_]*.py")
         self._run_discovered_suites()
@@ -100,6 +105,7 @@ class TestRunner(object):
     # ---- Private methods
 
     def _run_discovered_suites(self):
+        # type: () -> None
         """Run both normal and isolated suites."""
         suites = self._merge_suites(self._import_errors, self._suites)
         self._run_suites(suites)
@@ -107,6 +113,7 @@ class TestRunner(object):
         self._print_summary()
 
     def _run_suites(self, suites):
+        # type: (unittest.TestSuite) -> None
         """Run suites."""
         if not self._count_suites(suites):
             return
@@ -118,6 +125,7 @@ class TestRunner(object):
         self.failures += len(result.failures)
 
     def _run_suites_in_isolation(self, suites):
+        # type: (unittest.TestSuite) -> None
         """Run each suite using new instance of Python interpreter."""
         if not self._count_suites(suites):
             return
@@ -153,6 +161,7 @@ class TestRunner(object):
         self.ran += self._count_suites(suites)
 
     def _count_suites(self, suites):
+        # type: (unittest.TestSuite) -> int
         count = 0
         for suite in suites:
             if isinstance(suite, unittest.TestSuite):
@@ -161,6 +170,7 @@ class TestRunner(object):
         return count
 
     def _merge_suites(self, suites1, suites2):
+        # type: (unittest.TestSuite, unittest.TestSuite) -> unittest.TestSuite
         merged = unittest.TestSuite()
         for suite in suites1:
             merged.addTest(suite)
@@ -168,7 +178,8 @@ class TestRunner(object):
             merged.addTest(suite)
         return merged
 
-    def _discover(self, pattern, testcase=None):
+    def _discover(self, pattern, testcase_name=""):
+        # type: (str, str) -> None
         """Test discovery using glob pattern from arg or main()."""
         self._reset_state()
         loader = unittest.TestLoader()
@@ -177,8 +188,8 @@ class TestRunner(object):
             for level2_suite in level1_suite:
                 if isinstance(level2_suite, unittest.TestSuite):
                     for testcase_obj in level2_suite:
-                        if testcase:
-                            if re.match(re.escape(testcase),
+                        if testcase_name:
+                            if re.match(re.escape(testcase_name),
                                         testcase_obj.id()):
                                 self._suites.addTest(level2_suite)
                             break
@@ -188,7 +199,7 @@ class TestRunner(object):
                         else:
                             self._suites.addTest(level2_suite)
                             break
-                elif not testcase:
+                elif not testcase_name:
                     # unittest.loader.ModuleImportFailure
                     # Warning: If there is an import error in a file
                     # containing a test case that is being run then there
@@ -201,6 +212,7 @@ class TestRunner(object):
                     self._import_errors.addTest(level2_suite)
 
     def _print_summary(self):
+        # type: () -> None
         """Print summary and exit."""
         print("-"*70)
         print("[_runner.py] Ran "+str(self.ran)+" tests in total")
@@ -219,6 +231,7 @@ class TestRunner(object):
         self._exit()
 
     def _exit(self):
+        # type: () -> None
         """Exit with appropriate exit code."""
         if self.errors or self.failures:
             sys.exit(1)

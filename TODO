@@ -3,6 +3,24 @@
 * Unicode strings in Python 2
 
 ---
+* use comments type hinting compatible with both Py2/3?
+  in Cython source code? And in Python examples?
+  Pep 484: https://www.python.org/dev/peps/pep-0484
+  Example:
+    def embezzle(self, account, funds=1000000, *fake_receipts):
+        # type: (str, int *str) -> none
+  In Python 2 it is not possible to obtain this annotation. In python 3
+  there is func.__annotations__ attribute when using real non-comments
+  annotations. Maybe you could parse files yourself and add the attribute
+  dynamically like this?:
+    def _parse(self, filename, dir='.'):
+        pass
+    _parse.__annotations__ = {'filename': str, 'return': list}
+  In Python 3 it works like this:
+    def _parse(self, filename: str, dir='.') -> list:
+        pass
+  PyCharm supports both Py2 comment annotations and Py3 annotations.
+
 * wx.chromectrl is missing documentation in api/ docs
 * package:
     private/ - cython .pyd/so modules
