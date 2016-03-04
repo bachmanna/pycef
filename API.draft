@@ -25,6 +25,12 @@ pycef
 pycef.app
 ---------
 
+    App.instance()?
+        get_setting() <- GetAppSetting()
+        get_switch() <- GetCommandLineSwitch()
+        get_browser(window_handle) <- GetBrowserByWindowHandle()
+        get_binaries_dir() <- GetModuleDirectory()
+
     Settings()
         - get rid of "enabled"/"disabled" in settings names
         - get rid of many options that are rarely used, they can still
@@ -112,26 +118,64 @@ pycef.wx.chromectrl
 pycef.keyboard
 --------------
 """Cross-platform keys mapping."""
-    old VirtualKey for Win
+    - old VirtualKey for Win
+    - old IsKeyModifier()
 
 
 pycef.types
 -----------
     NetworkError
+    - lots of more.. expose all CEF enum constants as classes
 
 
 pycef.helpers
 -------------
-    excepthook()
-    apppath()
+    except_hook() <- ExceptHook()
+    app_path() <- GetApplicationPath()
 
 
-pycef.window
+pycef.utils
+-----------
+    get_navigate_url()
+
+
+pycef.task
+----------
+    post_task()?
+    or
+    >>> import pycef as cef; import cef.task; cef.task.post()?
+
+
+pycef.thread
 ------------
+    current_thread() <- IsThread()
+    Thread:
+        UI
+        IO
+        File
+    >>> current_thread() == Thread.UI
+    or
+    >>> import pycef as cef
+    >>> import cef.thread
+    >>> cef.thread.current() == cef.thread.UI?
+
+
+pycef.gtk
+---------
+    gtk_plug_new
+    gtk_widget_show
+
+pycef.x11
+---------
+    install_error_handlers()
+
+
+pycef.windowhandle?
+-------------------
 Expose these only after implemented for all platforms.
 
-    validhandle()
-    getparent()
+    is_valid()
+    get_parent()
 
 
 pycef.interfaces

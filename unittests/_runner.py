@@ -79,7 +79,7 @@ class TestRunner(object):
     def run_testcase(self, testcase):
         # type: (str) -> None
         """Run single test case eg 'foo.BarTest'. This is needed to
-        run single testcase that is marked as IsolatedTest."""
+           run single testcase that is marked as IsolatedTest."""
         self._discover("[!_]*.py", testcase)
         assert not self._count_suites(self._isolated_suites)
         if not self._count_suites(self._suites):
@@ -92,7 +92,7 @@ class TestRunner(object):
     def run_file(self, filename):
         # type: (str) -> None
         """Run test cases from a specific file. This is needed so that
-        you can use _runner.main() in isolated tests."""
+           you can use _runner.main() in isolated tests."""
         self._discover(filename)
         self._run_discovered_suites()
 
@@ -131,6 +131,7 @@ class TestRunner(object):
             return
         for suite in suites:
             # Find test case identifier
+            testcase_id = ""
             for testcase in suite:
                 testcase_id = testcase.id()
                 break
