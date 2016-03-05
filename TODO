@@ -1,8 +1,13 @@
 * Update to Chromium 47
 * Update to Cython 0.23.4
 * Unicode strings in Python 2
+    - both str and unicode have a common base class basestring
 
 ---
+* provide stub .pyi files for type checking for pycef API
+    - https://www.python.org/dev/peps/pep-0484/#stub-files
+    - stubs for python 2.7 stdlib:
+        https://github.com/python/typeshed/tree/master/stdlib/2.7
 * use comments type hinting compatible with both Py2/3?
   in Cython source code? And in Python examples?
   Pep 484: https://www.python.org/dev/peps/pep-0484
