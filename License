@@ -1,6 +1,6 @@
-Copyright (c) 2012 The CEF Python Authors - see the Authors file.
+Copyright (c) 2012 The PyCEF Authors - see the Authors file.
 All rights reserved. Licensed under the BSD 3-clause license.
-See project's website: https://github.com/cztomczak/cefpython
+See project's website: https://github.com/cztomczak/pycef
 
 This product includes the following third party libraries:
 * Chromium Embedded Framework licensed under the BSD 3-clause
