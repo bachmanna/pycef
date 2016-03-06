@@ -1,9 +1,20 @@
 * Update to Chromium 47
 * Update to Cython 0.23.4
 * Unicode strings in Python 2
-    - both str and unicode have a common base class basestring
 
 ---
+
+* unicode:
+  - file paths should always be bytes in both Py2 and Py3?
+    - In Python 3 I've encountered issues on Windows when passing
+      unicode strings to stdlib file functions (as of Python 3.2,
+      but maybe that's fixed in latest Py 3.4/3.5?).
+  - urls should be bytes in Py2 and unicode in Py3!
+* pystring() function in cython to automatically convert user-supplied
+  strings to unicode. Make checks whether all classes/functions exposed
+  to Python call pystr() for function parameters - tools/check_cython.py
+* automatic conversion of pystr strings to unicode when calling
+  user-supplied callbacks - see tools/check_cython.py docstring notes
 * provide stub .pyi files for type checking for pycef API
     - https://www.python.org/dev/peps/pep-0484/#stub-files
     - stubs for python 2.7 stdlib:

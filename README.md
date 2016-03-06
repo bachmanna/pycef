@@ -17,7 +17,8 @@ New changes coming:
 * Updated to the latest Chromium
 * Unicode strings in both Python 2 and Python 3. In CEF Python byte
   strings were used in Python 2.
-* API cleanup. Better structure with submodules like helpers, thread etc.
+* API cleanup. Better package structure with submodules like app,
+  browser, interfaces, etc.
 * Will follow the [PEP8](https://www.python.org/dev/peps/pep-0008/)
   style guide. Function names in lower case with underscores. Transform
   enum uppercase constants to class types whenever possible.
