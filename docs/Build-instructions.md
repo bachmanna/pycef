@@ -25,11 +25,11 @@ requirements common for all platforms.
 
 __Windows__
 
-* For Python 2.7 VS2008 compiler is required:
+* For Python 2.7 - VS2008 compiler is required:
   http://www.microsoft.com/en-us/download/details.aspx?id=44266
-* For Python 3.4 VS2010 compiler is required:
+* For Python 3.4 - VS2010 compiler is required:
   https://docs.python.org/3.4/using/windows.html#compiling-python-on-windows
-* For Python 3.5 VS2015 compiler is required:
+* For Python 3.5 - VS2015 compiler is required:
   https://docs.python.org/3.5/using/windows.html#compiling-python-on-windows
 * To build CEF from sources you must install VS2013 Update 4 or later
   and use Win7 x64 or later. 32-bit OS'es are not supported. For more
@@ -79,7 +79,6 @@ first.
 
 To build CEF follow the instructions on the Branches and
 Building CEF wiki page:
-
 https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 
 After it is successfully built - apply patches, rebuild and remake
