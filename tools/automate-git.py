@@ -1,6 +1,6 @@
 """ This is a modified copy of automate-git.py from upstream CEF.
 
-Some modifications were applied for CEF Python specific use case.
+Some modifications were applied for PyCEF specific use case.
 There is a patch file with the same name as this script that contains
 differences from the original file.
 
@@ -53,9 +53,11 @@ Options:
   --no-depot-tools-update
                         Do not update depot_tools.
   --force-build         Force CEF debug and release builds. This builds
-                        cefclient on all platforms and chrome_sandbox on
+                        [build-target] on all platforms and chrome_sandbox on
                         Linux.
   --no-build            Do not build CEF.
+  --build-target=BUILDTARGET
+                        Target name(s) to build (defaults to "cefclient").
   --build-tests         Also build the cef_unittests target.
   --no-debug-build      Don't perform the CEF debug build.
   --no-release-build    Don't perform the CEF release build.
@@ -99,7 +101,7 @@ import zipfile
 ##
 
 depot_tools_url = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
-depot_tools_archive_url = 'https://src.chromium.org/svn/trunk/tools/depot_tools.zip'
+depot_tools_archive_url = 'https://storage.googleapis.com/chrome-infra/depot_tools.zip'
 
 cef_git_url = 'https://bitbucket.org/chromiumembedded/cef.git'
 
@@ -214,7 +216,7 @@ def get_git_url(path):
     return result['out'].strip()
   return 'Unknown'
 
-def download_and_extract(src, target, contents_prefix):
+def download_and_extract(src, target):
   """ Extracts the contents of src, which may be a URL or local file, to the
       target directory. """
   temporary = False
@@ -237,19 +239,11 @@ def download_and_extract(src, target, contents_prefix):
   if not zipfile.is_zipfile(archive_path):
     raise Exception('Not a valid zip archive: ' + src)
 
-  def remove_prefix(zip, prefix):
-    offset = len(prefix)
-    for zipinfo in zip.infolist():
-      name = zipinfo.filename
-      if len(name) > offset and name[:offset] == prefix:
-        zipinfo.filename = name[offset:]
-        yield zipinfo
-
   # Attempt to extract the archive file.
   try:
     os.makedirs(target)
     zf = zipfile.ZipFile(archive_path, 'r')
-    zf.extractall(target, remove_prefix(zf, contents_prefix))
+    zf.extractall(target)
   except:
     shutil.rmtree(target, onerror=onerror)
     raise
@@ -463,11 +457,13 @@ parser.add_option('--no-depot-tools-update',
 parser.add_option('--force-build',
                   action='store_true', dest='forcebuild', default=False,
                   help='Force CEF debug and release builds. This builds '+\
-                       'cefclient on all platforms and chrome_sandbox on '+\
-                       'Linux.')
+                       '[build-target] on all platforms and chrome_sandbox '+\
+                       'on Linux.')
 parser.add_option('--no-build',
                   action='store_true', dest='nobuild', default=False,
                   help='Do not build CEF.')
+parser.add_option('--build-target', dest='buildtarget', default='cefclient',
+                  help='Target name(s) to build (defaults to "cefclient").')
 parser.add_option('--build-tests',
                   action='store_true', dest='buildtests', default=False,
                   help='Also build the cef_unittests target.')
@@ -548,6 +544,13 @@ if (options.noreleasebuild and \
       options.clientdistrib or options.clientdistribonly)) or \
    (options.minimaldistribonly and options.clientdistribonly):
   print 'Invalid combination of options.'
+  parser.print_help(sys.stderr)
+  sys.exit()
+
+if (options.clientdistrib or options.clientdistribonly) and \
+   options.buildtarget.find('cefclient') == -1:
+  print "A client distribution cannot be generated if --build-target "+\
+        "excludes cefclient."
   parser.print_help(sys.stderr)
   sys.exit()
 
@@ -655,8 +658,7 @@ if not os.path.exists(depot_tools_dir):
     msg('Extracting %s to %s.' % \
         (options.depottoolsarchive, depot_tools_dir))
     if not options.dryrun:
-      download_and_extract(options.depottoolsarchive, depot_tools_dir, \
-                           'depot_tools/')
+      download_and_extract(options.depottoolsarchive, depot_tools_dir)
   else:
     # On Linux and OS X check out depot_tools using Git.
     run('git clone '+depot_tools_url+' '+depot_tools_dir, download_dir)
@@ -970,7 +972,13 @@ if not options.nobuild and (chromium_checkout_changed or \
   command = 'ninja -C '
   if options.verbosebuild:
     command = 'ninja -v -C'
-  target = ' cefclient'
+
+  # -- PYCEF modification below
+  assert os.environ['PYCEF_NINJA_JOBS']
+  command = 'ninja -v -j' + os.environ['PYCEF_NINJA_JOBS'] + ' -C'
+  # --
+
+  target = ' ' + options.buildtarget
   if options.buildtests:
     target = target + ' cef_unittests'
   if platform == 'linux':

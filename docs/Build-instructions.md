@@ -90,16 +90,16 @@ directory, not in the "download_dir/cef/" directory.
 
 ## How to patch
 
+Create a patch from unstaged changes in current directory:
+```
+cd chromium/src/cef/
+git diff --no-prefix --relative > cef.gyp.patch
+```
+
 Apply a patch in current directory:
 ```
 cd chromium/src/cef/
 git apply cef.gyp.patch
-```
-
-Create a patch from unstaged changes in current directory:
-```
-cd chromium/src/cef/
-git diff --relative > cef.gyp.patch
 ```
 
 
