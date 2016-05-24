@@ -6,8 +6,8 @@ Usage:
     automate.py (--prebuilt-cef | --build-cef)
                 [--cef-branch BRANCH] [--cef-commit COMMIT]
                 [--build-dir BUILDDIR] [--cef-build-dir CEFBUILDDIR]
-                [--ninja-jobs <2>] [--gyp-generators <ninja,msvs-ninja>]
-                [--gyp-msvs-version <2013>]
+                [--ninja-jobs JOBS] [--gyp-generators GENERATORS]
+                [--gyp-msvs-version MSVS]
     automate.py (-h | --help) [type -h to show full description for options]
 
 Options:
@@ -25,8 +25,8 @@ Options:
     --ninja-jobs        How many CEF jobs to run in parallel. To speed up
                         building set it to number of cores in your CPU.
                         By default set to 2.
-    --gyp-generators    Set GYP_GENERATORS [default: ninja,msvs-ninja].
-    --gyp-msvs-version  Set GYP_MSVS_VERSION [default: 2013].
+    --gyp-generators    Set GYP_GENERATORS [default: ninja].
+    --gyp-msvs-version  Set GYP_MSVS_VERSION.
 
 """
 
@@ -38,7 +38,6 @@ import platform
 import docopt
 import struct
 import re
-import shutil
 import stat
 import glob
 import shutil
@@ -49,8 +48,33 @@ ARCH64 = (8 * struct.calcsize('P') == 64)
 OS_POSTFIX = ("win" if platform.system() == "Windows" else
               "linux" if platform.system() == "Linux" else
               "mac" if platform.system() == "Darwin" else "unknown")
+OS_POSTFIX2 = "unknown"
+if OS_POSTFIX == "win":
+    OS_POSTFIX2 = "win32" if ARCH32 else "win64"
+elif OS_POSTFIX == "mac":
+    OS_POSTFIX2 = "mac32" if ARCH32 else "mac64"
+elif OS_POSTFIX == "linux":
+    OS_POSTFIX2 = "linux32" if ARCH32 else "linux64"
 
 CEF_GIT_URL = "https://bitbucket.org/chromiumembedded/cef.git"
+
+VS2015_VCVARS = "\"C:\Program Files (x86)\\Microsoft Visual Studio 14.0" \
+                "\\VC\\bin\\vcvars32.bat\"" \
+                if ARCH32 else \
+                "\"C:\Program Files (x86)\\Microsoft Visual Studio 14.0" \
+                "\\VC\\bin\\amd64\\vcvars64.bat\""
+
+VS2013_VCVARS = "\"C:\Program Files (x86)\\Microsoft Visual Studio 12.0" \
+                "\\VC\\bin\\vcvars32.bat\"" \
+                if ARCH32 else \
+                "\"C:\Program Files (x86)\\Microsoft Visual Studio 12.0" \
+                "\\VC\\bin\\amd64\\vcvars64.bat\""
+
+VS2008_VCVARS = "\"%LocalAppData%\\Programs\\Common\\Microsoft" \
+                "\\Visual C++ for Python\\9.0\\vcvarsall.bat\" x86" \
+                if ARCH32 else \
+                "\"%LocalAppData%\\Programs\\Common\\Microsoft" \
+                "\\Visual C++ for Python\\9.0\\vcvarsall.bat\" amd64"
 
 
 class Options(object):
@@ -63,14 +87,15 @@ class Options(object):
     cef_commit = ""
     build_dir = ""
     cef_build_dir = ""
-    ninja_jobs = "2"
+    ninja_jobs = 2
     gyp_generators = "ninja"
-    gyp_msvs_version = "2013"
+    gyp_msvs_version = ""
 
     # Internal options
     depot_tools_dir = ""
     tools_dir = ""
     pycef_dir = ""
+    binary_distrib = ""
 
 
 def main():
@@ -106,8 +131,15 @@ def setup_options(docopt_args):
     # --cef-branch
     # TODO: by default use branch by calling pycef_version()
     if not Options.cef_branch:
-        print("[automate.py] ERROR: CEF branch is required")
+        print("[automate.py] ERROR: --cef-branch flag is required")
         sys.exit(1)
+
+    # --gyp-msvs-version
+    if not Options.gyp_msvs_version:
+        if int(Options.cef_branch) >= 2704:
+            Options.gyp_msvs_version = "2015"
+        else:
+            Options.gyp_msvs_version = "2013"
 
     # --build-dir
     if Options.build_dir:
@@ -132,29 +164,113 @@ def setup_options(docopt_args):
     # --depot-tools-dir
     Options.depot_tools_dir = os.path.join(Options.cef_build_dir,
                                            "depot_tools")
+    # binary_distrib
+    Options.binary_distrib = os.path.join(Options.cef_build_dir, "chromium",
+                                          "src", "cef", "binary_distrib")
 
 
 def build_cef():
     """Build CEF from sources."""
 
-    # Step 1: clone cef repository
+    # Clone cef repo
     cef_dir = os.path.join(Options.cef_build_dir, "cef")
-    if os.path.exists(cef_dir):
-        delete_directory(cef_dir)
-    run_git("clone %s cef" % CEF_GIT_URL, Options.cef_build_dir)
-    run_git("checkout %s" % Options.cef_branch, cef_dir)
+    if not os.path.exists(cef_dir):
+        # Step 1a: clone cef repo and checkout branch
+        run_git("clone %s cef" % CEF_GIT_URL, Options.cef_build_dir)
+        run_git("checkout %s" % Options.cef_branch, cef_dir)
+        # Step 1b: update cef patches
+        update_cef_patches()
+        # Make sure the cef_build_dir/chromium/cef/ directory
+        # does not exist - it's a copy of the cef_build_dir/cef/ dir.
+        cef_dir2 = os.path.join(Options.cef_build_dir, "chromium", "cef")
+        assert not os.path.exists(cef_dir2)
 
-    # Step 2: update cef patches
-    update_cef_patches()
+    # Delete binary_distrib
+    if os.path.exists(Options.binary_distrib):
+        delete_directory(Options.binary_distrib)
 
-    # Step 3: run automate-git.py
+    # Run automate-git.py
     run_automate_git()
 
-    # Step 4: unpack and copy the libs/binaries
-    print("TODO: Step 4: unpack and copy the libs/binaries")
+    # Build cefclient, cefsimple, libcef_dll_wrapper
+    build_cef_projects()
 
-    # Step 5: build the pycef module
-    print("TODO: Step 5: build the pycef module")
+    # Copy bin/lib (eg cef_2526.gb660893_win32) to build/cef32/
+
+    # Build the pycef module
+    print("TODO: Build the pycef module")
+
+
+def build_cef_projects():
+    """Build cefclient, cefsimple, libcef_dll_wrapper."""
+    print("[automate.py] Binary distrib created in %s"
+          % Options.binary_distrib)
+    print("[automate.py] Building cef projects...")
+
+    # Find cef_binary directories and create the cef_binary/build/ dir
+    files = glob.glob(os.path.join(Options.binary_distrib,
+                                   "*_release_symbols"))
+    assert len(files) == 1, "More than one dir with release symbols found"
+    release_symbols = files[0]
+    cef_binary = release_symbols.replace("_release_symbols", "")
+    build_cefclient = os.path.join(cef_binary, "build_cefclient")
+    build_wrapper_mt = os.path.join(cef_binary, "build_wrapper_mt")
+    build_wrapper_md = os.path.join(cef_binary, "build_wrapper_md")
+    os.makedirs(build_cefclient)
+    os.makedirs(build_wrapper_mt)
+    os.makedirs(build_wrapper_md)
+
+    # Build cefclient and cefsimple
+    print("[automate.py] Building cefclient and cefsimple...")
+    command = ""
+    if platform.system() == "Windows":
+        if int(Options.cef_branch) >= 2704:
+            command += VS2015_VCVARS + " && "
+        else:
+            command += VS2013_VCVARS + " && "
+    command += "cmake -G \"Ninja\" -DCMAKE_BUILD_TYPE=Release .. && "
+    command += "ninja cefclient cefsimple"
+    run_command(command, build_cefclient)
+
+    # Command to build libcef_dll_wrapper
+    wrapper_command = ""
+    if platform.system() == "Windows":
+        wrapper_command += VS2008_VCVARS + " && "
+    wrapper_command += "cmake -G \"Ninja\" -DCMAKE_BUILD_TYPE=Release .. && "
+    wrapper_command += "ninja libcef_dll_wrapper"
+
+    # Build libcef_dll_wrapper_mt.lib
+    print("[automate.py] Building libcef_dll_wrapper /MT")
+    if sys.version_info[:2] == (2, 7):
+        old_gyp_msvs_version = Options.gyp_msvs_version
+        Options.gyp_msvs_version = "2008"
+        run_command(wrapper_command, build_wrapper_mt)
+        Options.gyp_msvs_version = old_gyp_msvs_version
+    else:
+        print("ERROR: This python version is not yet supported")
+        sys.exit(1)
+
+    # Build libcef_dll_wrapper_md.lib
+    print("[automate.py] Building libcef_dll_wrapper /MD")
+    if sys.version_info[:2] == (2, 7):
+        old_gyp_msvs_version = Options.gyp_msvs_version
+        Options.gyp_msvs_version = "2008"
+        # Replace /MT with /MD /wd\"4275\" in CMakeLists.txt
+        # Warnings are treated as errors so this needs to be ignored:
+        # >> warning C4275: non dll-interface class 'stdext::exception'
+        # >> used as base for dll-interface class 'std::bad_cast'
+        cmakelists = os.path.join(cef_binary, "CMakeLists.txt")
+        with open(cmakelists, "rb") as fp:
+            contents = fp.read()
+        contents = contents.replace(r"/MT ", r"/MD /wd\"4275\" ")
+        contents = contents.replace(r"/MTd ", r"/MDd /wd\"4275\" ")
+        with open(cmakelists, "wb") as fp:
+            fp.write(contents)
+        run_command(wrapper_command, build_wrapper_md)
+        Options.gyp_msvs_version = old_gyp_msvs_version
+    else:
+        print("ERROR: This python version is not yet supported")
+        sys.exit(1)
 
 
 def update_cef_patches():
@@ -210,7 +326,7 @@ def getenv():
     # Issue73 patch applied here.
     env["GYP_DEFINES"] = "use_allocator=none"
     # Modifications to automate-git.py
-    env["PYCEF_NINJA_JOBS"] = Options.ninja_jobs
+    env["PYCEF_NINJA_JOBS"] = str(Options.ninja_jobs)
     return env
 
 
@@ -259,6 +375,7 @@ def run_automate_git():
     # We clone cef repository ourselves and update cef patches with ours,
     # so don't fetch/update CEF repo.
     args.append("--no-cef-update")
+    args.append("--no-distrib-archive")
 
     args = " ".join(args)
     return run_python(script+" "+args, Options.cef_build_dir)

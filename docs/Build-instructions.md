@@ -31,10 +31,19 @@ __Windows__
   https://docs.python.org/3.4/using/windows.html#compiling-python-on-windows
 * For Python 3.5 - VS2015 compiler is required:
   https://docs.python.org/3.5/using/windows.html#compiling-python-on-windows
-* To build CEF from sources you must install VS2013 Update 4 or later
-  and use Win7 x64 or later. 32-bit OS'es are not supported. For more
-  details see [here]
-  (https://www.chromium.org/developers/how-tos/build-instructions-windows).
+* To build CEF from sources:
+    * Use Win7 x64 or later. 32-bit OS'es are not supported. For more details see [here]
+    (https://www.chromium.org/developers/how-tos/build-instructions-windows).
+    * For CEF branch >= 2704 install VS2015 Update 2 or later
+    * For CEF branch < 2704 install VS2013 Update 4 or later
+    * Install [CMake](https://cmake.org/) 2.8.12.1 or newer and add cmake.exe
+        to PATH
+    * Install [ninja](http://martine.github.io/ninja/) and add ninja.exe
+        to PATH
+    * You need more than 8 GB of RAM during linking, if there is an error
+        just add additional virtual memory
+    * For Python 2.7 copy "pycef/src/windows/stdint.h" to
+      "%LocalAppData%\Programs\Common\Microsoft\Visual C++ for Python\9.0\VC\include\"
 
 __All platforms__
 
@@ -61,7 +70,7 @@ need to customize the build then use the --help flag to see more.
 Run the automate.py tool using the --build-cef flag:
 ```
 cd tools/
-python automate.py --build-cef
+python automate.py --build-cef --cef-branch 2526
 ```
 
 You should be fine by running it with the default options, but if you
