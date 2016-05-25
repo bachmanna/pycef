@@ -40,8 +40,8 @@ __Windows__
         to PATH
     * Install [ninja](http://martine.github.io/ninja/) and add ninja.exe
         to PATH
-    * You need more than 8 GB of RAM during linking, if there is an error
-        just add additional virtual memory
+    * You need about 16 GB of RAM during linking. If there is an error
+        just add additional virtual memory.
     * For Python 2.7 copy "pycef/src/windows/stdint.h" to
       "%LocalAppData%\Programs\Common\Microsoft\Visual C++ for Python\9.0\VC\include\"
 

@@ -1,8 +1,12 @@
-""" This is a modified copy of automate-git.py from upstream CEF.
+""" See automate.py. This script is for internal usage only, don't
+call it directly. This is a modified copy of automate-git.py from
+upstream CEF.
 
 Some modifications were applied for PyCEF specific use case.
 There is a patch file with the same name as this script that contains
 differences from the original file.
+
+--------
 
 Usage: automate-git.py [options]
 
