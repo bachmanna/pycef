@@ -1,5 +1,11 @@
 # PyCEF
 
+There is no workable demo for PyCEF yet. CEF Python is still actively developed and the link is: https://github.com/cztomczak/cefpython
+
+The PyCEF project ideas are currently being implemented as part of CEF Python. Any breaking changes are described in the Migration Guide document. You can already see implemented: update to latest Chromium, Tutorial, new API docs, better examples, python 3 support, unit tests, new tools that automate building CEF with patches etc. Most of the new features described in PyCEF draft can be implemented in CEF Python, so I decided that abandoning CEF Python at this point wasn't a good idea. I might fork CEF Python in the future and create PyCEF from it, when new features would require a major backward compatibility breaks, such as completely refactored API or Unicode support in Py2. But that's a distant future and I'm still not sure if forking is a good idea, will see.
+
+-----
+
 PyCEF is a CEF Python clone that is more Pythonic. It is still under
 works. See below how a Hello World example will look like using the
 new API. It creates a window with a browser and navigates to Google:
